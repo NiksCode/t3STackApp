@@ -49,12 +49,15 @@ model Session {
 
 model User {
     id            String    @id @default(cuid())
+    userName      String?   @unique
     name          String?
     email         String?   @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Resume        Resume?
+    PhoneNumber   String?
 }
 
 model VerificationToken {
@@ -63,4 +66,20 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Resume {
+    User     User   @relation(fields: [userName], references: [id])
+    userName String @unique
+    Jobs     Jobs[]
+}
+
+model Jobs {
+    id             String   @id @default(cuid())
+    Resume         Resume   @relation(fields: [resumeUserName], references: [userName])
+    resumeUserName String
+    yearFrom       DateTime
+    yearTo         DateTime
+    title          String
+    description    String
 }
